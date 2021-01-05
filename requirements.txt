@@ -1,8 +1,7 @@
 # requirements.txt contains the needed python libraries
 python-Levenshtein
 sumy
-pandas
-requests 
+pandas 
 googlesearch-python
 beautifulsoup4
 alembic==0.9.6
