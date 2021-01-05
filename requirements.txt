@@ -2,7 +2,7 @@
 python-Levenshtein
 sumy
 pandas
-requests
+requests 
 googlesearch-python
 beautifulsoup4
 alembic==0.9.6
