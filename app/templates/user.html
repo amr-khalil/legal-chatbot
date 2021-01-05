@@ -1,0 +1,55 @@
+<!-- 
+   User profile template.
+   The extends tag tells the template engine that this template “extends” another template.
+   The block tag tells the template engine that a child template override those portions of the base template.
+-->
+{% extends 'base.html' %}
+{% block bodyblock %}
+<!-- Import moment library form time convertions-->
+<script type="text/javascript" src="https://momentjs.com/downloads/moment.min.js"></script>
+
+<!-- Creat edit table-->
+<table>
+   <tr valign="top">
+      <td>
+         <img src="{{ user.avatar(128) }}">
+      </td>
+      <td>
+         <h1>User: {{ user.username }}</h1>
+         {% if user.about_me %}
+         <p>{{ user.about_me }}</p>
+         {% endif %}
+         <p>{{ user.followers.count() }} followers, {{ user.followed.count() }} following</p>
+         {% if user.last_seen %}
+         <p id='last_seen'>Last seen on: {{ user.last_seen }} </p>
+         {% endif %}
+         {% if user == current_user %}
+         <p><a href="{{ url_for('edit_profile') }}">Edit your profile</a></p>
+         {% elif not current_user.is_following(user) %}
+         <p><a href="{{ url_for('follow', username=user.username) }}">Follow</a></p>
+         {% else %}
+         <p><a href="{{ url_for('unfollow', username=user.username) }}">Unfollow</a></p>
+         {% endif %}
+      </td>
+   </tr>
+</table>
+<hr>
+
+<!-- Paginations -->
+{% for post in posts %}
+{% include "_post.html" %}
+{% endfor %}
+{% if prev_url %}
+<a href="{{ prev_url }}">Newer Post </a>
+{% endif %}
+{% if next_url %}
+<a href="{{ next_url }}">Older Post </a>
+{% endif %}
+
+<!-- Javascript last seen function -->
+<script type="text/javascript">
+   var x = document.getElementById("last_seen");   // Get the element with id="demo"
+   x.innerHTML = "Last seen: " + moment(x.innerHTML).startOf('hour').fromNow();
+   
+</script>
+{% endblock %}

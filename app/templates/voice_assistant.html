@@ -1,0 +1,136 @@
+<!-- 
+  Voice assistant template 
+  The extends tag tells the template engine that this template “extends” another template.
+  The block tag tells the template engine that a child template override those portions of the base template.
+-->
+{% extends 'base.html' %}
+{% block bodyblock %}
+<div class="wrapper">
+   <div class="audio-control">
+      <p id="audio-control" class="white-circle">
+         <img src="{{ url_for('static', filename='img/chatbot3.gif') }}">
+         <canvas class="visualizer"></canvas>
+      </p>
+      <p><span id="message"></span></p>
+      <form>
+         <div style="" class="form-group py-3">
+            <label for="sel1">Auswählen</label>
+            <select class="form-control"  id="BOT" name="BOT" >
+               <option type="text" value="Legalbot">Legal</option>
+               <option type="text" value="GoogleSearch">General</option>
+               <option type="text" value="Test">Test</option>
+            </select>
+         </div>
+      </form>
+   </div>
+
+   <!-- Import AWS Lex -->
+   <script src="https://sdk.amazonaws.com/js/aws-sdk-2.48.0.min.js"></script>
+   <script src="{{ url_for('static', filename='js/aws-lex-audio.js') }}"></script>
+   <script src="{{ url_for('static', filename='js/renderer.js') }}"></script>
+
+
+   <!-- Configration AWS Lex -->
+   <script type="text/javascript">
+      var waveform = window.Waveform();
+      var message = document.getElementById('message');
+      var config, conversation;
+      message.textContent = 'Passive';
+      
+      document.getElementById('audio-control').onclick = function () {
+      
+          AWS.config.credentials =new AWS.CognitoIdentityCredentials({
+                  IdentityPoolId: 'eu-central-1:06535dc5-2289-4a76-83eb-f2ff333a37a3',
+              });
+          AWS.config.region = 'eu-central-1';
+          
+          config = {
+              lexConfig: { botName: document.getElementById('BOT').value }
+          };
+      
+          conversation = new LexAudio.conversation(config, function (state) {
+              message.textContent = state + '...';
+              if (state === 'Listening') {
+                  waveform.prepCanvas();
+              }
+              if (state === 'Sending') {
+                  waveform.clearCanvas();
+              }
+          }, function (data) {
+              console.log('Transcript: ', data.inputTranscript, ", Response: ", data.message);
+          }, function (error) {
+              message.textContent = error;
+          }, function (timeDomain, bufferLength) {
+              waveform.visualizeAudioBuffer(timeDomain, bufferLength);
+          });
+          conversation.advanceConversation();
+      };
+      
+      
+      // Save the selected value and change the Bot
+      $(function() {
+      if (localStorage.getItem('BOT')) {
+          $("#BOT option").eq(localStorage.getItem('BOT')).prop('selected', true);
+      }
+      
+      $("#BOT").on('change', function() {
+          localStorage.setItem('BOT', $('option:selected', this).index());
+          location.reload();
+          config = {
+              lexConfig: { botName: document.getElementById('BOT').value }
+          };
+      });
+      });
+      
+   </script>
+</div>
+
+<!-- CSS styling for AWS Lex Voice Assistant -->
+<style type="text/css">
+   .white-circle {
+   cursor: pointer;
+   background-color: black;
+   box-shadow: 0 0 100px #d8dbe3;
+   border-radius: 100px;
+   height: 200px;
+   margin: 0 auto;
+   width: 200px;
+   overflow: hidden;
+   }
+   .white-circle:hover {
+   box-shadow: 0 0 100px #007dbc;
+   }
+   .white-circle img {
+   position: relative;
+   max-width: 250%;
+   max-height: 250%;
+   margin-left: -150px;
+   margin-top: -87px;
+   display: block;
+   }
+   .audio-control {
+   position: fixed;
+   top: 50%;
+   left: 50%;
+   margin: -100px 0 0 -100px;
+   text-align: center;
+   }
+   body {
+   line-height: 21px;
+   color: white;
+   font-weight: 400;
+   background-color: #f9fafc;
+   background-color: black;
+   }
+   canvas {
+   height: 100px;
+   width: 100vw;
+   margin-top: -50px;
+   display: block;
+   position: fixed;
+   top: 50%;
+   left: 0;
+   z-index: -1;
+   }
+</style>
+{% endblock %}
