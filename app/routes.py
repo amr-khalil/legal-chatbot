@@ -199,4 +199,8 @@ def chatbot():
 def voice_assistant():
 	return render_template('voice_assistant.html')
 
-
+# Route for software architecture
+@app.route('/so_funktioniert_es')
+#@login_required
+def so_funktioniert_es():
+	return render_template('so_funktioniert_es.html')
