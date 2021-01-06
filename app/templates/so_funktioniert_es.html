@@ -1,0 +1,25 @@
+<!-- 
+   Software Architecture template.
+   The extends tag tells the template engine that this template “extends” another template.
+   The block tag tells the template engine that a child template override those portions of the base template.
+-->
+
+{% extends 'base.html' %}
+{% block bodyblock %}
+
+<div >
+	<img src="{{ url_for('static', filename='img/architektur.png') }}" />
+</div>
+
+<style type="text/css">
+	img{
+
+		width: 75%; 
+		margin-left: auto;
+		margin-right: auto;
+		display: block;
+	}
+
+</style>
+
+{% endblock %}
