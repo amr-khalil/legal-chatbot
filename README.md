@@ -1,5 +1,5 @@
 # Legal Chatbot
-## Author Amr Khalil, Marcel Krummenauer, Abubakir Tarin
+### Authors: Amr Khalil, Marcel Krummenauer, Abubakir Tarin
 
 ## Chatbot Architektur
 
