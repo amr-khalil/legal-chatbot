@@ -27,21 +27,17 @@
          </form>
       </div>
       {% if posts %}
-      {% for (q, a, s) in posts %}
       <div style="text-align: justify; text-justify: inter-word;" class="post">
-         <h5>{{q}}</h5>
+         <h5>{{posts[0]}}</h5>
          <hr>
-         <p>{{a}}</p>
+         <p>{{posts[1]}}</p>
          <hr>
-         {% if s >= 93 %}
-         <p>Zuversicht: Ich bin {{s}} % Sicher ⭐⭐⭐⭐⭐  </p>
-         {% elif s >= 90 %}
-         <p>Zuversicht: Ich bin {{s}} % Sicher ⭐⭐⭐  </p>
+         {% if posts[2] != '#' %}
+            <p>Quelle: <a href='{{posts[2]}}'>{{posts[2]}}</a> </p>
          {% else %}
-         <p>Zuversicht: Ich bin {{s}} % Sicher ⭐ </p>
+            <p>Quelle: <a href='#'>Unser KI-System</a> </p>
          {%endif%}
       </div>
-      {% endfor%}
       {% endif%}
    </section>
    <div class="overlay"></div>
