@@ -18,6 +18,58 @@ import string
 from googlesearch import search
 from bs4 import BeautifulSoup
 import os
+# import AWS DynamoDB
+import boto3
+from botocore.exceptions import ClientError
+import json
+
+
+def FAQ_data(): 
+    # DynamoDB connection
+    dynamodb = boto3.resource('dynamodb',
+                         aws_access_key_id = os.environ.get('aws_access_key_id') or 'AKIAI3SH5HX2JF3HEHTQ',
+                         aws_secret_access_key = os.environ.get('aws_secret_access_key') or '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',
+                         region_name = "eu-central-1")
+
+    # import DB table
+    table = dynamodb.Table('legalbot-FAQ')
+    # convert table into json and extract items
+    items = table.scan()['Items']
+    # load table in dataframe
+    df = pd.json_normalize(items)
+    return df
+
+
+    # Search in FAQ data using Levenshtein distance
+def search_FAQ(questions):
+    # Open the dataframe
+    df = FAQ_data()
+    def getApproximateAnswer(q):
+        max_score = 0
+        answer = ""
+        prediction = ""
+
+        # itteration on FAQ dataframe
+        for idx, row in df.iterrows():
+            # Score
+            score = ratio(row["Question"], q)
+            if score >= 0.9: # I'm sure, stop here
+                return row["Answer"], score, row["Question"]
+            elif score > max_score: # I'm unsure, continue
+                max_score = score
+                answer = row["Answer"]
+                prediction = row["Question"]
+        if max_score >= 0.5: # min. score
+            return answer, max_score, prediction
+        return "", max_score, prediction
+
+    # Get the best result 
+    def getResult(q):
+        answer, score, prediction = getApproximateAnswer(q)
+        return [q, prediction, answer, score]
+    return pd.DataFrame(list(map(getResult, questions)), columns=["Q", "Prediction", "A", "Score"])
+
+
 
 # To clean any text
 def text_processing(text):
@@ -88,52 +140,4 @@ def summarize(text, SENTENCES_COUNT=3, algorithm = "LSA"):
     return result
 
 
-# To merge FAQ data
-def merge_FAQ_data():
-    # Select csv files
-    path = 'data/csv'
-    csv_files = []
-    group = []
-    for file in os.listdir(path):
-        if file.endswith('csv'):
-            filename, ext = file.split('.')
-            csv_files.append(file)
-
-    # Create dataframe
-    for csv in csv_files:
-        filename, ext = csv.split('.')
-        df_ = pd.read_csv('{}/{}'.format(path,csv))
-        df_['Category'] = filename
-        group.append(df_)
-    df = pd.concat(group,ignore_index=True)
-    return df
-
-# Search in FAQ data using Levenshtein distance
-def search_FAQ(questions):
-    # Open the dataframe
-    df = merge_FAQ_data()
-    def getApproximateAnswer(q):
-        max_score = 0
-        answer = ""
-        prediction = ""
-
-        # itteration on FAQ dataframe
-        for idx, row in df.iterrows():
-            # Score
-            score = ratio(row["Question"], q)
-            if score >= 0.9: # I'm sure, stop here
-                return row["Answer"], score, row["Question"]
-            elif score > max_score: # I'm unsure, continue
-                max_score = score
-                answer = row["Answer"]
-                prediction = row["Question"]
-        if max_score >= 0.5: # min. score
-            return answer, max_score, prediction
-        return "", max_score, prediction
-
-    # Get the best result 
-    def getResult(q):
-        answer, score, prediction = getApproximateAnswer(q)
-        return [q, prediction, answer, score]
-    return pd.DataFrame(list(map(getResult, questions)), columns=["Q", "Prediction", "A", "Score"])
 
