@@ -1,0 +1,62 @@
+<!-- Homepage template.
+   The extends tag tells the template engine that this template “extends” another template.
+   The block tag tells the template engine that a child template override those portions of the base template.
+-->
+{% extends 'base.html' %}
+{% block bodyblock %}
+
+<script type="text/javascript">
+   $(document).ready(function () {
+    $(".text").click(function () {
+      $(".overlay").fadeIn(500);
+    });
+    $(".overlay").not(".text").click(function() {
+      $(".overlay").fadeOut(500);
+    });
+    
+   });
+</script>
+
+<body class="wrapper">
+   <section>
+      <div class="text">
+         <form action="" method="POST">
+            <img src="http://placehold.it/100/100"/>
+            <textarea placeholder="Jetzt Frage stellen..." name="question" required></textarea>
+            <input type="submit" value="post"/>
+         </form>
+      </div>
+      {% if posts %}
+      {% for (q, a, s) in posts %}
+      <div style="text-align: justify; text-justify: inter-word;" class="post">
+         <h5>{{q}}</h5>
+         <hr>
+         <p>{{a}}</p>
+         <hr>
+         {% if s >= 93 %}
+         <p>Zuversicht: Ich bin {{s}} % Sicher ⭐⭐⭐⭐⭐  </p>
+         {% elif s >= 90 %}
+         <p>Zuversicht: Ich bin {{s}} % Sicher ⭐⭐⭐  </p>
+         {% else %}
+         <p>Zuversicht: Ich bin {{s}} % Sicher ⭐ </p>
+         {%endif%}
+      </div>
+      {% endfor%}
+      {% endif%}
+   </section>
+   <div class="overlay"></div>
+   <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+   <!-- Footer -->
+   <!-- Footer -->
+   <footer class="page-footer font-small blue">
+      <!-- Copyright -->
+      <div class="footer-copyright text-center py-3">© 2020 Entwickelt von:<br>
+         <a href="https://www.linkedin.com/in/amrk/">Amr Khalil</a> |
+         <a href="https://www.linkedin.com/in/marcel-krummenauer-88701413a/">Marcel Krummenauer</a> |
+         <a href="https://www.linkedin.com/in/abubakir-tarin-918398198/">Abubakir Tarin</a>
+      </div>
+      <!-- Copyright -->
+   </footer>
+   <!-- End Footer -->
+</body>
+{% endblock %}
