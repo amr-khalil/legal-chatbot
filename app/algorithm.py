@@ -27,8 +27,8 @@ import json
 def FAQ_data(): 
     # DynamoDB connection
     dynamodb = boto3.resource('dynamodb',
-                         aws_access_key_id = os.environ.get('aws_access_key_id'),
-                         aws_secret_access_key = os.environ.get('aws_secret_access_key'),
+                         aws_access_key_id = os.environ.get('aws_access_key_id') or 'AKIAI3SH5HX2JF3HEHTQ',
+                         aws_secret_access_key = os.environ.get('aws_secret_access_key') or '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',
                          region_name = "eu-central-1")
 
     # import DB table
@@ -105,7 +105,7 @@ def web_mining(question):
     processed_text = text_processing(text)
     # summarize the text
     summarized_text = summarize(processed_text, 4, 'TextRank')
-    return summarized_text#, urls[idx]
+    return summarized_text, urls[idx]
 
 # To summerize the google articles and get rid of the similar answers
 def summarize(text, SENTENCES_COUNT=3, algorithm = "LSA"):
@@ -138,6 +138,3 @@ def summarize(text, SENTENCES_COUNT=3, algorithm = "LSA"):
     for sentence in summarizer(parser.document, SENTENCES_COUNT):
         result += str(sentence)
     return result
-
-
-
