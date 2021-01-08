@@ -19,10 +19,16 @@ def before_request():
 		current_user.last_seen = datetime.utcnow()
 		db.session.commit()
 
-# Route for home page
-@app.route('/', methods=['POST', 'GET'])
-@app.route('/index', methods=['POST', 'GET'])
+# Route for home page and Chatbot
+@app.route('/')
+@app.route('/index')
+@app.route('/chatbot')
+#@login_required
 def index():
+	return render_template('index.html')
+
+@app.route('/FAQ', methods=['POST', 'GET'])
+def FAQ():
 	if request.method == 'POST' :
 		question = request.form['question']
 		url = '#'
@@ -50,7 +56,7 @@ def index():
 		
 		return render_template('index.html', posts = posts)
 
-	return render_template('index.html')
+	return render_template('FAQ.html')
 
 # Route for login
 @app.route('/login', methods=['POST','GET'])
@@ -187,11 +193,7 @@ def logout():
 	logout_user()
 	return redirect(url_for('login'))
 
-# Route for Chatbot
-@app.route('/chatbot')
-#@login_required
-def chatbot():
-	return render_template('chatbot.html')
+
 
 # Route for Voice Assistant
 @app.route('/voice_assistant')
