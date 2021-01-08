@@ -27,8 +27,8 @@ import json
 def FAQ_data(): 
     # DynamoDB connection
     dynamodb = boto3.resource('dynamodb',
-                         aws_access_key_id = os.environ.get('aws_access_key_id') or 'AKIAI3SH5HX2JF3HEHTQ',
-                         aws_secret_access_key = os.environ.get('aws_secret_access_key') or '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',
+                         aws_access_key_id = os.environ.get('aws_access_key_id'),
+                         aws_secret_access_key = os.environ.get('aws_secret_access_key'),
                          region_name = "eu-central-1")
 
     # import DB table
