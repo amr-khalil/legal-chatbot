@@ -1,0 +1,18 @@
+[
+    {
+        "Question": "Frage1",
+        "Answer": "Antwort1",
+        "Category": "Category1"
+    },
+    {
+        "Question": "Frage2",
+        "Answer": "Antwort2",
+        "Category": "Category2"
+    },
+    {
+        "Question": "Frage3",
+        "Answer": "Antwort3",
+        "Category": "Category3"
+    }
+    
+ ]
