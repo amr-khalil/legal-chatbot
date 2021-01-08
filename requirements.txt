@@ -1,4 +1,5 @@
 # requirements.txt contains the needed python libraries
+boto3
 python-Levenshtein
 sumy
 pandas 
