@@ -34,27 +34,17 @@ def FAQ():
 		url = '#'
 		# FAQ is dataframe we must use iloc
 		answer1, score = search_FAQ([question]).iloc[0][2], search_FAQ([question]).iloc[0][3]
-		answer2 =  web_mining(question)
+		answer2, url =  web_mining(question)
 		#answer, score = search_FAQ([question]).iloc[0][2] or web_mining(question)
+		if answer1:
+			url = '#'
+		else:
+			url = url.strip()
 		answer = answer1 or answer2
-		# If the answet not in FAQ list give 50% accuracy
-		if score < 0.5:
-			score = 50
-		else:
-			score = int(round(score, 2)*100)
-
-		if 'question' in session:
-			session['question'] += [question]
-			session['answer'] +=[answer]
-			session['score'] +=[score]
-		else:
-			session['question'] =[question]
-			session['answer'] =[answer]
-			session['score'] =[score]
-
-		posts = [x for x in zip(session['question'], session['answer'],session['score'])][::-1]
+	
+		posts = [question, answer, url]
 		
-		return render_template('index.html', posts = posts)
+		return render_template('FAQ.html', posts = posts)
 
 	return render_template('FAQ.html')
 
